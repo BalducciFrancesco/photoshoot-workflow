@@ -64,7 +64,7 @@ df.columns = ["email", "images"]
 
 recipients = [] # List to hold recipient information (email and filepaths)
 pattern = re.compile(r"^IMG_\d{4}\.JPG$", re.IGNORECASE)
-all_files_in_folder = set(f for f in os.listdir(input_dir) if pattern.match(f))
+all_files_in_folder = set(f.upper() for f in os.listdir(input_dir) if pattern.match(f))
 all_files_to_send = set()
 
 # For each receipient, check and prepare the files to send  
@@ -81,7 +81,7 @@ for idx, row in df.iterrows():
             print(f"Error: '{req_image}' file does not exist in the input folder.")
             sys.exit(1)
         filepaths.append(image_path)
-        all_files_to_send.add(req_image)
+        all_files_to_send.add(req_image.upper())
     if not filepaths:
         print(f"Error: Recipient '{req_addr}' does not have any files to send.")
         sys.exit(1)
