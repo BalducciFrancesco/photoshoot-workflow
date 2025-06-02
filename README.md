@@ -48,6 +48,7 @@ python send_email.py --input export --csv_file path/to/responses.csv --username 
 
 - The script reads the CSV, matches each participant to their images, and sends personalized emails with the images attached.
 - **Strongly suggested!** If you want to test without sending emails, omit `--send` and use `--output test_send` to save the emails as `.eml` files.
+- **Important:** To use your Gmail account with this script, you must enable [App Passwords](https://support.google.com/mail/answer/185833?hl=en) in your Google Account and use the generated app password instead of your regular Gmail password.
 
 ## Requirements
 
