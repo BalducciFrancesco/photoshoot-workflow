@@ -104,6 +104,13 @@ if unused_files:
 
 input("Press Enter to continue and send emails (or Ctrl+C to abort)..")
 
+# Dry run or fallback method: save emails as .eml files
+def save_eml(msg, to):
+    eml_name = to.replace("@", "_at_") + '.eml'
+    eml_path = os.path.join(output_dir, eml_name)
+    with open(eml_path, 'wb') as eml_file:
+        eml_file.write(msg.as_bytes())
+
 def send_email(to, filepaths):
     msg = EmailMessage()
     msg['Subject'] = 'Photoshoot takeout'
@@ -131,15 +138,16 @@ def send_email(to, filepaths):
 
     print(f"Sending email to {to} with files: {','.join(os.path.splitext(os.path.basename(fp))[0] for fp in filepaths)}")
     if send_emails:
-        with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
-            smtp.starttls()
-            smtp.login(username, password)
-            smtp.send_message(msg)
+        try:
+            with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
+                smtp.starttls()
+                smtp.login(username, password)
+                smtp.send_message(msg)
+        except Exception as e:  # e.g. attachment limits
+            print(f"Error! Falling back to saving the email as .eml in '{output_dir}'. Reason: {e}")
+            save_eml(msg, to)
     else:
-        eml_name = to.replace("@", "_at_") + '.eml'
-        eml_path = os.path.join(output_dir, eml_name)
-        with open(eml_path, 'wb') as eml_file:
-            eml_file.write(msg.as_bytes())
+        save_eml(msg, to)
 
 for recipient in recipients:
     send_email(recipient["email"], recipient["filepaths"])
